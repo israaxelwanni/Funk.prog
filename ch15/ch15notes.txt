@@ -1,0 +1,33 @@
+15.1
+Haskell will always return the same value for an expresions (if it evaluates), 
+no matter the evaluation starategie (unlike imperative languages, ex n + (n = 1))
+
+15.2
+redex = reducible expression 
+innermoast evaluation
+outermoast evaluation
+
+15.3
+inf :: Int 
+inf = 1 + inf
+
+Call-by-name and call-by-value:
+call-by-value = parameters/values of the function are evaluated first. 
+call-by name = applying the function (names) definition first.  
+if there exists any evaluation sequence that terminates 
+for a given expression, then call-by-name evaluation will 
+also terminate for this expression, and produce the same final result. 
+
+15.4
+call-by-name evaluation may require more reduction steps than call-by-value 
+=>
+arguments are evaluated precisely once using call-by-value evaluation, 
+but may be evaluated many times using call-by-name.
+^^^
+pointers can be used to solve this problem
+
+lazy evaluation = The use of call-by-name evaluation in conjunction with sharing
+lazy evaluation has the property that it ensures that evaluation 
+terminates as often as possible and sharing ensures that there arent unessecary
+evaluation steps. 
+
