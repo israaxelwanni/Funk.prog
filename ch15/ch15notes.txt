@@ -31,3 +31,20 @@ lazy evaluation has the property that it ensures that evaluation
 terminates as often as possible and sharing ensures that there arent unessecary
 evaluation steps. 
 
+15.6
+a simple procedure for generating the infinite sequence of all prime numbers, 
+as opposed to a finite prefix of this sequence:
+- write down the infinite sequence 2, 3, 4, 5, 6, ...; 
+- mark the first number, p, in the sequence as prime; 
+- delete all multiples of p from the sequence;
+- return to the second step.
+
+the sieve of Eratosthenes: producess an infinit list of prime nbrs
+primes :: [Int] 
+primes = sieve [2..]
+ 
+sieve :: [Int] -> [Int]
+sieve (p:xs) = p : sieve [x | x <- xs, x `mod` p /= 0]
+
+15.7
+$! is a notation for a strict application (call-by-value)
