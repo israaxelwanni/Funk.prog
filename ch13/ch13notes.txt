@@ -1,0 +1,24 @@
+13.1
+parser = a program that takes a string of characters as input, 
+        and produces some form of tree that makes the syntactic structure 
+        of the string explicit. 
+
+Parsers are an important topic in computing, because most real-life programs 
+use a parser to preprocess their input
+
+13.2
+type Parser = String -> Tree
+
+generalised:
+type Parser = String -> (Tree,String)
+
+furthar generalisation to accomidate for faliure; the convention that the 
+empty list denotes failure, and a singleton list denotes success:
+type Parser = String -> [(Tree,String)]
+
+paramiterised:
+type Parser a = String -> [(a,String)]
+
+"A parser of type a is a function that takes an input string and produces 
+a list of results, each of which is a pair comprising a result value of 
+type a and an output string."
