@@ -48,6 +48,11 @@ instance Monad Parser where
 class Applicative f => Alternative f where
     empty :: f a
     (<|>) :: f a -> f a -> f a
+    many :: f a -> f [a]
+    some :: f a -> f [a]
+
+    many x = Main.some x Main.<|> pure []
+    some x = pure (:) <*> x <*> Main.many x
 
 instance Main.Alternative Parser where
     empty :: Parser a
@@ -61,3 +66,75 @@ instance Main.Alternative Parser where
 sat p = do x <- item
            if p x then return x else Main.empty
 
+digit :: Parser Char 
+digit = sat isDigit
+
+lower :: Parser Char 
+lower = sat isLower
+
+upper :: Parser Char 
+upper = sat isUpper
+
+letter :: Parser Char 
+letter = sat isAlpha
+
+alphanum :: Parser Char 
+alphanum = sat isAlphaNum
+
+char :: Char -> Parser Char 
+char x = sat (== x)
+
+string :: String -> Parser String 
+string [] = return []
+string (x:xs) = do char x
+                   string xs 
+                   return (x:xs)
+
+ident :: Parser String 
+ident = do x <- lower
+           xs <- Main.many alphanum 
+           return (x:xs)
+
+nat :: Parser Int
+nat = do 
+        xs <- Main.some digit 
+        return (read xs)
+
+
+space :: Parser ()
+space = do 
+        Main.many (sat isSpace)
+        return ()
+
+int :: Parser Int 
+int = do 
+        char '-'
+        n <- nat
+        return (-n) Main.<|> nat
+
+token :: Parser a -> Parser a 
+token p = do space
+             v <- p 
+             space 
+             return v
+
+identifier :: Parser String 
+identifier = token ident
+
+natural :: Parser Int 
+natural = token nat
+
+integer :: Parser Int 
+integer = token int
+
+symbol :: String -> Parser String 
+symbol xs = token (string xs)
+
+nats :: Parser [Int]
+nats = do 
+          symbol "["
+          n <- natural
+          ns <- Main.many (do symbol "," 
+                              natural) 
+          symbol "]"
+          return (n:ns)
