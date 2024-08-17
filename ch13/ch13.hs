@@ -1,4 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
 import Control.Applicative
 import Data.Char
 
