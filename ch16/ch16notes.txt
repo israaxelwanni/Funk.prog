@@ -10,10 +10,69 @@ possible when defining functions
 Haskell programs involve some form of recursion. Reasoning about such programs 
 normally proceeds using the simple but powerful technique of induction.
 
-
 data Nat = Zero | Succ Nat
 
 add :: Nat -> Nat -> Nat
 add Zero m = m
 add (Succ n) m = Succ (add n m)
 
+Example:
+P(n) ::= add n Zero = n
+for the property n we want to prove that add n Zero = n
+
+base case: 
+P(Zero) ::= add Zero Zero = Zero
+
+add Zero Zero
+v v v (apply add)
+Zero
+
+inductive case: 
+P(n) => P(Succ(n)) = add n Zero = n => add (Succ n) Zero = Succ n
+
+add (Succ (n)) Zero
+v v v (Apply add)
+Succ (add n Zero)
+v v v (apply inducyion hypothesis: add n Zero = n)
+Succ n
+
+Example:
+P(x) ::= add x (add y z) = add (add x y) z
+(we take x because it occurs at the first position of the function, 
+implying that it is the recursive variable)
+
+Base case: 
+P(Zero) ::= add Zero (add y z) = add (add Zero y) z
+
+add Zero (add y z)
+v v v (Apply outer add)
+add y z
+v v v (unapplying (inner) add)
+add (add Zero y) z
+
+add (add Zero y) z
+v v v (apply inner add)
+add y z 
+v v v (unapplying (outer) add)
+add Zero (add y z)
+
+inductive case: 
+(Start with the property that looks the most complicated)
+P(x) => P(Succ x) ::= 
+add x (add y z) = add (add x y) z => add (Succ x) (add y z) = add (add (Succ x) y) z
+
+add (Succ x) (add y z)
+v v v (apply outer add)
+Succ (add x (add y z))
+v v v (apply induction hypothesis: add x (add y z) = add (add x y) z)
+Succ (add (add x y) z)
+v v v (unapply outer add)
+add (Succ (add x y)) z
+v v v  (unnapply inner add)
+add (add (Succ x) y) z
+
+16.5
+
+
+
+16.6
