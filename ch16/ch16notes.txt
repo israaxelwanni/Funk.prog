@@ -1,0 +1,19 @@
+16.2
+non-overlapping functions = Patterns that do not rely on the order in which 
+                            they are matched.
+
+In order to simplify the process of reasoning about programs, 
+it is good practice to use non-overlapping patterns whenever 
+possible when defining functions
+
+16.4
+Haskell programs involve some form of recursion. Reasoning about such programs 
+normally proceeds using the simple but powerful technique of induction.
+
+
+data Nat = Zero | Succ Nat
+
+add :: Nat -> Nat -> Nat
+add Zero m = m
+add (Succ n) m = Succ (add n m)
+
