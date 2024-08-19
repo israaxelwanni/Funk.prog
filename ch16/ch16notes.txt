@@ -289,3 +289,109 @@ flatten :: Tree -> [Int]
 flatten t = flatten' t []
 where ns is the accumulator
 
+16.7
+data Expr = Val Int | Add Expr Expr
+type Stack = [Int]
+type Code = [Op]
+data Op = PUSH Int | ADD
+            deriving Show
+
+eval :: Expr -> Int
+eval (Val n) = n
+eval (Add x y) = eval x + eval y
+
+-- compile
+comp :: Expr -> Code 
+comp (Val n) = [PUSH n]
+comp (Add x y) = comp x ++ comp y ++ [ADD]
+
+exec :: Code -> Stack -> Stack
+exec [] s = s
+exec (PUSH n : c) s = exec c (n : s)
+exec (ADD : c) (m : n : s) = exec c (n+m : s)
+
+Show that the equasion exec (comp e) s = eval e : s is true for an arbitrary 
+expresion e
+    Inductive hypothesis: exec (comp e) s = eval e : s
+
+Base case: e = Val n
+
+exec (comp (Val n)) s 
+v v v (apply comp)
+exec ([PUSH n]) s
+v v v (apply exec)
+exec [] (n : s)
+v v v (apply exec)
+n : s 
+v v v (unapply eval)
+eval (Val n) : s
+
+exec (comp (Val n)) s = eval (Val n) : s
+
+inductive case: e = Add x y 
+
+exec (comp (Add x y)) s 
+v v v (apply comp)
+exec (comp x ++ comp y ++ [ADD]) s
+v v v (apply bracets around right half in exec)
+exec (comp x ++ (comp y ++ [ADD])) s
+v v v (apply distributivity-lemma*)
+exec (comp y ++ [ADD]) (exec (comp x) s)
+v v v (apply inductive hypothesis on exec (comp x) s)
+exec (comp y ++ [ADD]) (eval x : s)
+v v v (apply distributivity-lemma*, because (eval x : s) is our stack)
+exec [ADD] (exec (comp y) (eval x : s))
+v v v (apply inductive hypothesis on y)
+exec [ADD] (eval y : eval x : s)
+v v v (apply exec)
+exec [] (eval y + eval x : s)
+v v v (apply exec)
+eval x + eval y : s
+v v v (unapply eval)
+eval (Add x y) : s
+
+distributivity-lemma*:
+exec (c ++ d) s = exec d (exec c s)
+
+
+We will re-write our compiler to get a more effisient way to evaluate expresions. 
+
+comp :: Expr -> Code 
+comp e = comp' e []
+
+comp' :: Expr -> Code -> Code
+comp' (Val n) c = PUSH n : c
+comp' (Add x y) c = comp' x (comp' y (ADD : c))
+
+We can redefine comp e = comp’ e []
+
+Inductive hypothesis: exec (comp’ e c) s = exec c (eval e : s)
+
+Base case: e = Val n 
+exec (comp’ (Val n) c) s
+v v v (apply comp')
+exec (PUSH n : c) s
+v v v (apply exec)
+exec c (n : s)
+v v v (unapply eval)
+exec c (eval (Val n) : s)
+
+
+inductive case: e = Add x y 
+exec (comp’ (Add x y) c) s
+v v v (apply comp')
+exec (comp' x (comp' y (ADD : c))) s 
+v v v (apply induction hypothesis for x)
+exec (comp' y (ADD : c)) (eval x : s)
+v v v (apply induction hypothesis for y)
+exec (ADD : c) (eval y : eval x : s)
+v v v (apply exec)
+exec c (eval x + eval y : s)
+v v v (unapply eval)
+exec c (eval (Add x y) : s)
+
+Benefits:
+- redused the number of steps in the induction. 
+- no lemmas are now needed (that require further proof).
+- append (++) has now vanished.
+- the stack underflow problem (in the distributivity-lemma*) has now also vanished.
