@@ -73,6 +73,57 @@ add (add (Succ x) y) z
 
 16.5
 
+Base cases for inductive proof on lists is the property with the empty list and 
+the inductive case is the property with the non-empty list.
+P(xs) -> P([]) & P(xs) => P(x:xs)
 
+Example:
+
+rev :: [a] -> [a]
+rev [] = []
+rev (x:xs) = rev xs ++ [x]
+
+show that:
+rev (rev xs) = xs
+
+Base case: 
+P([]) ::= rev (rev []) = []
+
+rev (rev [])
+v v v (apply inner rev)
+rev []
+v v v (apply rev)
+[]
+
+inductive case:
+P(xs) => P(x:xs) ::= rev (rev xs) = xs => rev (rev (x:xs)) = x:xs
+
+rev (rev (x:xs))
+v v v (apply inner rev)
+rev (rev xs ++ [x])
+v v v (distributivity-lemma*)
+rev [x] ++ rev (rev xs)
+v v v (rev of a singleton is just the same singletion -> singleton-lemma*)
+[x] ++ rev (rev xs)
+v v v (apply inductive hypothesis)
+[x] ++ xs
+v v v (apply (++))
+(x:xs)
+
+distributivity-lemma*:
+rev (xs ++ ys) = rev ys ++ rev xs
+
+{singleton-lemma*
+rev [x]
+v v v (extend the singletion with :)
+rev (x : [])
+v v v (apply rev)
+rev [] ++ [x]
+v v v (apply rev)
+[] ++ [x]
+v v v (apply (++))
+[x]
+}
 
 16.6
+
